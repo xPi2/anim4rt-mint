@@ -22,7 +22,9 @@ const client = createClient({
         console.log(chain)
         console.log(rpcUrl)
         return [
-            new InjectedConnector(),
+            new InjectedConnector({
+                chains: [chain]
+            }),
             new CoinbaseWalletConnector({
                 options: {
                     appName: 'mint',
