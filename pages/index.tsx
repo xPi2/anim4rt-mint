@@ -19,8 +19,8 @@ const ConnectButton = () => {
 
     const ConnectorsModal = () => (
         <>
-            <label htmlFor="connect-modal" className="modal">
-                <label className="modal-box flex flex-col gap-1">
+            <label htmlFor="connect-modal" className="modal bg-transparent backdrop-blur">
+                <label className="modal-box flex flex-col gap-1 z-20">
                     {connectors.map((connector) => (
                         <button
                             className="btn"
@@ -90,22 +90,39 @@ const MintButton = ({ isLoading, onClick }) => {
     return <div className={style} onClick={() => onClick()}>Mint</div>
 }
 
+const MintStatus = ({ current, max }) => {
+    const minted = current.toString().padStart(3, '0')
+    return (
+        <div className="flex flex-col">
+            { current >= max ? 
+            (<>
+                <div className="text-lg self-center uppercase">Sold out</div>
+            </>)
+            : (<>
+                <div className="text-lg self-center">Minting Now</div>
+                <div className="text-lg self-center">{minted} / {max}</div>
+            </>)
+            }
+        </div>
+    )
+}
+
 const isValidConnection = (chain?: any, account?: any) => {
     return account?.connector ? (chain?.id == allowedChain.id) : false;
 }
 
-const mintStepConfig = mintSteps.publicSale;
-
-const MintStepBanner = () => {
-    const step = mintStepConfig.id
-    switch (step) {
-        case 0:
-            return (<img src="/static/goldlist.png"/>)
-        case 1:
-            return (<img src="/static/whitelist.png"/>)
-        default:
-            return (<img src="/static/publicsale.png"/>)
+const MintStepBanner = ({ step }) => {
+    const image = () => {
+        switch (step) {
+            case 0:
+                return (<img src="/goldlist.png" />)
+            case 1:
+                return (<img src="/whitelist.png" />)
+            default:
+                return (<img src="/publicsale.png" />)
+        }
     }
+    return (<div className="self-center grid place-items-center w-2/5">{image()}</div>)
 }
 
 const MintModule = () => {
@@ -113,32 +130,32 @@ const MintModule = () => {
     const { activeChain } = useNetwork()
     const { data: account } = useAccount()
     const { data: totalSupply } = useContractSupply(isValidConnection(activeChain, account))
-    const { data: addressBalance } = useAccountBalance(account?.address, isValidConnection(activeChain, account))
+    // const { data: addressBalance } = useAccountBalance(account?.address, isValidConnection(activeChain, account))
 
-    const saleStep = mintStepConfig.name;
-    const isConnected = account ? true : false
-    const tokenPrice = mintStepConfig.price;
-    const maxSupply = mintStepConfig.supplyLimit;
-    const mintMin = mintStepConfig.min;
-    const mintMax = mintStepConfig.max;
-    const userBalance = addressBalance?.toNumber() ?? 0
+    // const isConnected = account ? true : false
+    const stepId = 2;
+    const stepConfig = mintSteps[stepId];
+    const tokenPrice = stepConfig.price;
+    const maxSupply = stepConfig.supplyLimit;
+    const mintMin = stepConfig.min;
+    const mintMax = stepConfig.max;
 
-    const balance = userBalance.toString().padStart(3, '0')
-    const minted = totalSupply?.toString().padStart(3, '0') ?? "xxxxx"
+    // const userBalance = addressBalance?.toNumber() ?? 0
+    // const balance = userBalance.toString().padStart(3, '0')
 
     const { write: mint, isLoading } = useContractMint(account?.address, mintAmount, tokenPrice)
 
     return (
         <>
             <div className="flex flex-col">
-                <div className="self-center">
-                    <Image src="/static/logo.png" width="200" height="200" />
+                <div className="self-center w-1/2 md:w-2/5">
+                    <Image src="/logo.png" width="100%" height="100%" layout="responsive" />
                 </div>
-                <div className="text-xl font-semibold uppercase text-center">{saleStep}</div>
-                <div className="text-2xl mt-2 font-semibold uppercase text-center">Please enter your quantity</div>
+                <MintStepBanner step={stepConfig.id} />
+                <div className="text-2xl mt-4 font-semibold uppercase text-center">Please enter your quantity</div>
             </div>
 
-            <div className="bg-neutral w-fit text-3xl py-3 px-10 rounded-lg text-black font-bold self-center">{mintAmount}</div>
+            <div className="bg-neutral w-24 text-center text-3xl py-3 rounded-lg text-black font-bold self-center">{mintAmount}</div>
 
             <div className="flex flex-col gap-1">
                 <MintController min={mintMin} max={mintMax} value={mintAmount} handleChange={(value: number) => setMintAmount(value)} />
@@ -152,11 +169,7 @@ const MintModule = () => {
                         (<MintButton isLoading={isLoading} onClick={() => mint()} />) : (<ConnectButton />)
                 }
             </div>
-
-            <div className="flex flex-col">
-                <div className="text-lg self-center">Minting Now</div>
-                <div className="text-lg self-center">{minted} / {maxSupply}</div>
-            </div>
+            <MintStatus current={totalSupply ?? "---"} max={maxSupply} />
         </>
     )
 }
