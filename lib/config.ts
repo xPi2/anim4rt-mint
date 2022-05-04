@@ -27,6 +27,7 @@ const steps = [
 
 const config = {
     tokenAddress: process.env.NEXT_PUBLIC_TOKEN_ADDRESS,
+    mintStartTime: process.env.NEXT_PUBLIC_MINT_START_TIME || 0,
     mintSteps: steps
 }
 
@@ -34,5 +35,6 @@ console.log(config)
 
 export const {
     tokenAddress,
+    mintStartTime,
     mintSteps
 } = config

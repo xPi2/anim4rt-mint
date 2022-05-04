@@ -2,8 +2,8 @@ import { useAccount, useConnect, useContractWrite, useContractRead, chain, useNe
 
 import Layout from '../components/Layout'
 import ERC721 from '../abis/ERC721A.json'
-import { tokenAddress, mintSteps } from '../lib/config'
-import { useState } from 'react'
+import { tokenAddress, mintStartTime, mintSteps } from '../lib/config'
+import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import Image from 'next/image'
 
@@ -94,14 +94,14 @@ const MintStatus = ({ current, max }) => {
     const minted = current.toString().padStart(3, '0')
     return (
         <div className="flex flex-col">
-            { current >= max ? 
-            (<>
-                <div className="text-lg self-center uppercase">Sold out</div>
-            </>)
-            : (<>
-                <div className="text-lg self-center">Minting Now</div>
-                <div className="text-lg self-center">{minted} / {max}</div>
-            </>)
+            {current >= max ?
+                (<>
+                    <div className="text-lg self-center uppercase">Sold out</div>
+                </>)
+                : (<>
+                    <div className="text-lg self-center">Minting Now</div>
+                    <div className="text-lg self-center">{minted} / {max}</div>
+                </>)
             }
         </div>
     )
@@ -146,11 +146,8 @@ const MintModule = () => {
     const { write: mint, isLoading } = useContractMint(account?.address, mintAmount, tokenPrice)
 
     return (
-        <>
+        <div className="flex flex-col align-center justify-center gap-10">
             <div className="flex flex-col">
-                <div className="self-center w-1/2 md:w-2/5">
-                    <Image src="/logo.png" width="100%" height="100%" layout="responsive" />
-                </div>
                 <MintStepBanner step={stepConfig.id} />
                 <div className="text-2xl mt-4 font-semibold uppercase text-center">Please enter your quantity</div>
             </div>
@@ -170,7 +167,78 @@ const MintModule = () => {
                 }
             </div>
             <MintStatus current={totalSupply ?? "---"} max={maxSupply} />
-        </>
+        </div>
+    )
+}
+
+const Logo = () => (
+    <div className="self-center w-1/2 md:w-2/5">
+        <Image src="/logo.png" width="100%" height="100%" layout="responsive" />
+    </div>
+)
+
+const useCountdown = (targetDate) => {
+    const countDownDate = new Date(targetDate).getTime();
+
+    const [countDown, setCountDown] = useState(
+        new Date().getTime() - countDownDate
+    )
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCountDown(countDownDate - new Date().getTime())
+        }, 1000);
+        return () => clearInterval(interval)
+    }, [countDownDate]);
+
+    return getTimeValues(countDown);
+}
+
+const getTimeValues = (countDown) => {
+    const day = 86400 * 1000
+    const hour = 3600 * 1000
+    const minute = 60 * 1000
+
+    const days = Math.floor(countDown / day)
+    const hours = Math.floor(countDown / hour) % 24
+    const minutes = Math.floor(countDown / minute) % 60
+    const seconds = Math.floor(countDown / 1000) % 60
+
+    return [days, hours, minutes, seconds]
+}
+
+
+
+const CountDown = ({ endTime }) => {
+    const [days, hours, minutes, seconds] = useCountdown(endTime)
+
+    return (
+        <div className="flex flex-row gap-3 md:gap-5 text-center self-center">
+            <div className="flex flex-col p-2 bg-primary rounded-box items-center">
+                <span className="countdown font-mono text-3xl md:text-5xl">
+                    <span style={{ '--value': Math.max(days, 0) } as React.CSSProperties}></span>
+                </span>
+                days
+            </div>
+            <div className="flex flex-col p-2 bg-primary rounded-box items-center">
+                <span className="countdown font-mono text-3xl md:text-5xl">
+                    <span style={{ '--value': Math.max(hours, 0) } as React.CSSProperties}></span>
+                </span>
+                hours
+            </div>
+            <div className="flex flex-col p-2 bg-primary rounded-box items-center">
+                <span className="countdown font-mono text-3xl md:text-5xl">
+                    <span style={{ '--value': Math.max(minutes, 0) } as React.CSSProperties}></span>
+                </span>
+                min
+            </div>
+            <div className="flex flex-col p-2 bg-primary rounded-box items-center">
+                <span className="countdown font-mono text-3xl md:text-5xl">
+                    <span style={{ '--value': Math.max(seconds, 0) } as React.CSSProperties}></span>
+                </span>
+                sec
+            </div>
+        </div>
     )
 }
 
@@ -179,8 +247,13 @@ const IndexPage = () => {
         <>
             <Layout title="Anim4rt - Mint">
                 <div className="hero h-full text-white bg-hero-pattern">
-                    <div className="flex flex-col align-center justify-center gap-10 w-4/5 md:w-1/3 md:max-w-screen-sm">
-                        <MintModule />
+                    <div className="flex flex-col align-center justify-center gap-1 w-4/5 md:w-1/3 md:max-w-screen-sm">
+                        <Logo />
+                        {
+                            mintStartTime > Date.now() ?
+                            <CountDown endTime={mintStartTime} /> :
+                            <MintModule />
+                        }
                     </div>
                 </div>
             </Layout>
