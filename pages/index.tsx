@@ -131,7 +131,7 @@ const MintStepBanner = ({ step }) => {
                 return (<img src="/publicsale.png" />)
         }
     }
-    return (<div className="self-center grid place-items-center w-2/5">{image()}</div>)
+    return (<div className="self-center grid place-items-center w-2/3">{image()}</div>)
 }
 
 const MintModule = () => {
@@ -149,12 +149,10 @@ const MintModule = () => {
     const mintMin = stepConfig.min;
     const mintMax = stepConfig.max;
     const maxSupply = stepConfig.supplyLimit;
-    // const mintMax = 1;
-    // const maxSupply = 1;
 
     useEffect(() => {
-        setMintAllowed(mintAmount < mintMax)
-    }, [mintAmount, mintMax])
+        setMintAllowed(totalSupply?.toNumber() < maxSupply)
+    }, [totalSupply, maxSupply])
 
     // const userBalance = addressBalance?.toNumber() ?? 0
     // const balance = userBalance.toString().padStart(3, '0')
@@ -162,7 +160,7 @@ const MintModule = () => {
     const { write: mint, isLoading } = useContractMint(account?.address, mintAmount, tokenPrice)
 
     return (
-        <div className="flex flex-col align-center justify-center items-center gap-5">
+        <div className="flex flex-col w-full align-center justify-center items-center gap-5">
             <MintStepBanner step={stepConfig.id} />
             {(account?.connector && mintAllowed) && (
                 <div className="flex flex-col w-full gap-10 items-center">
@@ -233,25 +231,25 @@ const CountDown = ({ endTime }) => {
 
     return (
         <div className="flex flex-row gap-3 md:gap-5 text-center self-center">
-            <div className="flex flex-col p-2 bg-primary rounded-box items-center">
+            <div className="flex flex-col p-2 rounded-box items-center">
                 <span className="countdown font-mono text-3xl md:text-5xl">
                     <span style={{ '--value': Math.max(days, 0) } as React.CSSProperties}></span>
                 </span>
                 days
             </div>
-            <div className="flex flex-col p-2 bg-primary rounded-box items-center">
+            <div className="flex flex-col p-2 items-center">
                 <span className="countdown font-mono text-3xl md:text-5xl">
                     <span style={{ '--value': Math.max(hours, 0) } as React.CSSProperties}></span>
                 </span>
                 hours
             </div>
-            <div className="flex flex-col p-2 bg-primary rounded-box items-center">
+            <div className="flex flex-col p-2 items-center">
                 <span className="countdown font-mono text-3xl md:text-5xl">
                     <span style={{ '--value': Math.max(minutes, 0) } as React.CSSProperties}></span>
                 </span>
                 min
             </div>
-            <div className="flex flex-col p-2 bg-primary rounded-box items-center">
+            <div className="flex flex-col p-2 items-center">
                 <span className="countdown font-mono text-3xl md:text-5xl">
                     <span style={{ '--value': Math.max(seconds, 0) } as React.CSSProperties}></span>
                 </span>

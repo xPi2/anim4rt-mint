@@ -6,6 +6,9 @@ module.exports = {
                 'hero-pattern': "url('/jungle-animals.png')"
             }
         },
+        fontFamily: {
+            'roboto': ['Roboto', 'sans-serif']
+        }
     },
     plugins: [require("daisyui")],
     daisyui: {
