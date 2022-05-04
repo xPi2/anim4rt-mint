@@ -1,7 +1,18 @@
-const steps = [
+type MintStep = {
+    id: number,
+    name: string,
+    startTime: number,
+    price: number,
+    min: number,
+    max: number,
+    supplyLimit: number
+}
+
+const steps: MintStep[] = [
     {
         id: 0,
         name: "Goldlist Sale",
+        startTime: 1651692702000,
         price: 0.04,
         min: 1,
         max: 2,
@@ -10,18 +21,20 @@ const steps = [
     {
         id: 1,
         name: "Whitelist Sale",
+        startTime: 1651702702000,
         price: 0.04,
         min: 1,
         max: 2,
-        supplyLimit: 1500,
+        supplyLimit: 2000,
     },
     {
         id: 2,
         name: "Public Sale",
+        startTime: 1651722702000,
         price: 0.04,
         min: 1,
-        max: 50,
-        supplyLimit: 7950,
+        max: 500,
+        supplyLimit: 9000,
     }
 ]
 

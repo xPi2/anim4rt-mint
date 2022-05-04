@@ -14,6 +14,14 @@ const WrongChainButton = () => {
     return <button className="btn btn-disabled">Switch to {allowedChain.name}</button>
 }
 
+const BackoffButton = ({ stepId }) => {
+    if (stepId < 2) {
+        return <button className="btn btn-primary">Join us on discord</button>
+    } else {
+        return <button className="btn btn-primary">Go to OpenSea</button>
+    }
+}
+
 const ConnectButton = () => {
     const { connect, connectors } = useConnect();
 
@@ -74,24 +82,25 @@ const useContractMint = (address: string, amount: number, price: number) => {
 
 const MintController = ({ min, max, value, handleChange }) => {
     return (
-        <>
+        <div className="flex flex-col w-full">
             <input type="range" min={min || 0} max={max || 1} value={value} onChange={(e) => handleChange(Number(e.target.value))} className="range range-primary" />
             <div className="w-full flex justify-between text-md px-2">
                 <span>{min}</span>
                 <span>{max}</span>
             </div>
-        </>
+        </div>
     )
 }
 
-const MintButton = ({ isLoading, onClick }) => {
+const MintButton = ({ isLoading, abled, onClick }) => {
     const baseStyle = "btn btn-primary"
-    const style = isLoading ? [baseStyle, "loading"].join(" ") : baseStyle
+    let style = isLoading ? [baseStyle, "loading"].join(" ") : baseStyle
+    style = !abled ? [baseStyle, "btn-disabled"].join(" ") : style
     return <div className={style} onClick={() => onClick()}>Mint</div>
 }
 
 const MintStatus = ({ current, max }) => {
-    const minted = current.toString().padStart(3, '0')
+    const minted = current.toString().padStart(max.toString().length, '0')
     return (
         <div className="flex flex-col">
             {current >= max ?
@@ -100,9 +109,9 @@ const MintStatus = ({ current, max }) => {
                 </>)
                 : (<>
                     <div className="text-lg self-center">Minting Now</div>
-                    <div className="text-lg self-center">{minted} / {max}</div>
                 </>)
             }
+            <div className="text-lg self-center">{minted} / {max}</div>
         </div>
     )
 }
@@ -127,18 +136,25 @@ const MintStepBanner = ({ step }) => {
 
 const MintModule = () => {
     const [mintAmount, setMintAmount] = useState(1);
+    const [mintAllowed, setMintAllowed] = useState(true);
     const { activeChain } = useNetwork()
     const { data: account } = useAccount()
     const { data: totalSupply } = useContractSupply(isValidConnection(activeChain, account))
     // const { data: addressBalance } = useAccountBalance(account?.address, isValidConnection(activeChain, account))
 
     // const isConnected = account ? true : false
-    const stepId = 2;
+    const stepId = 0;
     const stepConfig = mintSteps[stepId];
     const tokenPrice = stepConfig.price;
-    const maxSupply = stepConfig.supplyLimit;
     const mintMin = stepConfig.min;
     const mintMax = stepConfig.max;
+    const maxSupply = stepConfig.supplyLimit;
+    // const mintMax = 1;
+    // const maxSupply = 1;
+
+    useEffect(() => {
+        setMintAllowed(mintAmount < mintMax)
+    }, [mintAmount, mintMax])
 
     // const userBalance = addressBalance?.toNumber() ?? 0
     // const balance = userBalance.toString().padStart(3, '0')
@@ -146,24 +162,29 @@ const MintModule = () => {
     const { write: mint, isLoading } = useContractMint(account?.address, mintAmount, tokenPrice)
 
     return (
-        <div className="flex flex-col align-center justify-center gap-10">
-            <div className="flex flex-col">
-                <MintStepBanner step={stepConfig.id} />
-                <div className="text-2xl mt-4 font-semibold uppercase text-center">Please enter your quantity</div>
-            </div>
-
-            <div className="bg-neutral w-24 text-center text-3xl py-3 rounded-lg text-black font-bold self-center">{mintAmount}</div>
-
-            <div className="flex flex-col gap-1">
-                <MintController min={mintMin} max={mintMax} value={mintAmount} handleChange={(value: number) => setMintAmount(value)} />
-                <div className="text-lg font-semibold text-center">{tokenPrice} Ξ for each Anim4rt + Gas Fees</div>
-            </div>
+        <div className="flex flex-col align-center justify-center items-center gap-5">
+            <MintStepBanner step={stepConfig.id} />
+            {(account?.connector && mintAllowed) && (
+                <div className="flex flex-col w-full gap-10 items-center">
+                    <div className="text-2xl font-semibold uppercase text-center">
+                        Please enter your quantity
+                    </div>
+                    <div className="bg-neutral w-24 text-center text-3xl py-3 rounded-lg text-black font-bold self-center">
+                        {mintAmount}
+                    </div>
+                    <MintController min={mintMin} max={mintMax} value={mintAmount} handleChange={(value: number) => setMintAmount(value)} />
+                    <div className="text-lg font-semibold text-center">{tokenPrice} Ξ for each Anim4rt + Gas Fees</div>
+                </div>
+            )}
 
             <div className="flex flex-col w-2/3 md:w-1/2 self-center">
                 {(activeChain && activeChain.id != allowedChain.id) ?
                     (<WrongChainButton />) :
-                    account?.connector ?
-                        (<MintButton isLoading={isLoading} onClick={() => mint()} />) : (<ConnectButton />)
+                    !account?.connector ?
+                        (<ConnectButton />) :
+                        mintAllowed ?
+                            (<MintButton isLoading={isLoading} abled={mintAllowed} onClick={() => mint()} />) :
+                            (<BackoffButton stepId={stepId} />)
                 }
             </div>
             <MintStatus current={totalSupply ?? "---"} max={maxSupply} />
@@ -207,8 +228,6 @@ const getTimeValues = (countDown) => {
     return [days, hours, minutes, seconds]
 }
 
-
-
 const CountDown = ({ endTime }) => {
     const [days, hours, minutes, seconds] = useCountdown(endTime)
 
@@ -251,8 +270,8 @@ const IndexPage = () => {
                         <Logo />
                         {
                             mintStartTime > Date.now() ?
-                            <CountDown endTime={mintStartTime} /> :
-                            <MintModule />
+                                <CountDown endTime={mintStartTime} /> :
+                                <MintModule />
                         }
                     </div>
                 </div>
