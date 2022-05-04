@@ -163,7 +163,7 @@ const MintModule = () => {
         <div className="flex flex-col w-full align-center justify-center items-center gap-5">
             <MintStepBanner step={stepConfig.id} />
             {(account?.connector && mintAllowed) && (
-                <div className="flex flex-col w-full gap-10 items-center">
+                <>
                     <div className="text-2xl font-semibold uppercase text-center">
                         Please enter your quantity
                     </div>
@@ -172,7 +172,7 @@ const MintModule = () => {
                     </div>
                     <MintController min={mintMin} max={mintMax} value={mintAmount} handleChange={(value: number) => setMintAmount(value)} />
                     <div className="text-lg font-semibold text-center">{tokenPrice} Ξ for each Anim4rt + Gas Fees</div>
-                </div>
+                </>
             )}
 
             <div className="flex flex-col w-2/3 md:w-1/2 self-center">
