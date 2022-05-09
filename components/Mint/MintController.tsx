@@ -12,8 +12,7 @@ const MintController = ({ min, max, value, handleChange, stepId }) => {
         className="range range-primary "
       />
       <div
-        className="w-full flex justify-between text-md px-2 mt-6"
-        id="steps-count"
+        className="w-full flex justify-between text-md px-2 mt-3"
       >
         {stepId === 2 ? (
           <>

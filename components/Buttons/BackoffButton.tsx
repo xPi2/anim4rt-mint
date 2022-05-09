@@ -1,6 +1,6 @@
 import React from "react";
 
-const BackoffButton = ({ stepId }) => {
+const BackoffButton = ({ stepId, minted }) => {
   if (stepId < 2) {
     return (
       <a href="https://discord.com/invite/Anim4rt" target="_blank">
