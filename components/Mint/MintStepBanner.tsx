@@ -12,7 +12,7 @@ const MintStepBanner = ({ step }) => {
     }
   };
   return (
-    <div className="self-center grid place-items-center w-2/3">{image()}</div>
+    <div className="self-center grid place-items-center w-2/3 mb-5">{image()}</div>
   );
 };
 
