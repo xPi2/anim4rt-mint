@@ -28,7 +28,10 @@ const ConnectButton = () => {
 
   return (
     <>
-      <label htmlFor="connect-modal" className="btn btn-primary modal-button">
+      <label
+        htmlFor="connect-modal"
+        className="btn btn-primary modal-button text-white"
+      >
         Connect
       </label>
       <input type="checkbox" id="connect-modal" className="modal-toggle" />
