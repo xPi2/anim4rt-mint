@@ -2,7 +2,9 @@ import React from "react";
 
 const WrongChainButton = ({ allowedChain }) => {
   return (
-    <button className="btn btn-disabled ">Switch to {allowedChain.name}</button>
+    <button className="btn bg-brown border-brown text-orange">
+      Switch to {allowedChain.name}
+    </button>
   );
 };
 

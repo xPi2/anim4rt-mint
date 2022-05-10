@@ -1,7 +1,9 @@
 import React from "react";
 
 const MintStatus = ({ current, max }) => {
-  const minted = current.toString().padStart(max.toString().length, "0");
+  const minted = (Number(current) + 90)
+    .toString()
+    .padStart(max.toString().length, "0");
 
   return (
     <div className="flex flex-col">
