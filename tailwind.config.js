@@ -5,13 +5,13 @@ module.exports = {
       backgroundImage: {
         "hero-pattern": "url('/jungle-animals.png')",
       },
+      colors: {
+        orange: "#5C2700",
+        brown: "#FFB14E",
+      },
     },
     fontFamily: {
       roboto: ["Roboto", "sans-serif"],
-    },
-    colors: {
-      orange: "#5C2700 ",
-      brown: "#FFB14E ",
     },
   },
   plugins: [require("daisyui")],
