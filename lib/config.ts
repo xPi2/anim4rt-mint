@@ -16,7 +16,7 @@ const steps: MintStep[] = [
   {
     id: 0,
     name: "Goldlist Sale",
-    startTime: 1651692702000,
+    startTime: 1653235200000,
     price: 0.26,
     min: 1,
     max: 2,
@@ -25,7 +25,7 @@ const steps: MintStep[] = [
   {
     id: 1,
     name: "Whitelist Sale",
-    startTime: 1651702702000,
+    startTime: 1653580800000,
     price: 0.28,
     min: 1,
     max: 2,
@@ -34,7 +34,7 @@ const steps: MintStep[] = [
   {
     id: 2,
     name: "Public Sale",
-    startTime: 1651722702000,
+    startTime: 1653840000000,
     price: 0.3,
     min: 1,
     max: 50,
