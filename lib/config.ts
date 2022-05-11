@@ -43,6 +43,7 @@ const steps: MintStep[] = [
 ];
 
 const config = {
+  chainId: Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1),
   tokenAddress: process.env.NEXT_PUBLIC_TOKEN_ADDRESS,
   contractInterface: ArtERC721A.abi,
   mintStartTime: Number(process.env.NEXT_PUBLIC_MINT_START_TIME || 0),
@@ -55,6 +56,7 @@ const config = {
 console.log(config);
 
 export const {
+  chainId,
   tokenAddress,
   contractInterface,
   mintStartTime,

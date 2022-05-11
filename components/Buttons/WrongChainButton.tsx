@@ -3,11 +3,12 @@ import { useConnect } from "wagmi";
 
 const WrongChainButton = ({ allowedChain }) => {
   const { activeConnector } = useConnect();
+  const chainName = allowedChain.name.toLowerCase() == "ethereum" ? "mainnet" : allowedChain.name
 
   const changeWallet = async () => {
-    if ((await activeConnector.getChainId()) !== 4) {
+    if ((await activeConnector.getChainId()) !== allowedChain.id) {
       if (activeConnector.switchChain) {
-        await activeConnector.switchChain(4);
+        await activeConnector.switchChain(allowedChain.id);
       } else {
         throw new Error("Wrong network");
       }
@@ -16,10 +17,10 @@ const WrongChainButton = ({ allowedChain }) => {
 
   return (
     <button
-      className="btn bg-brown border-brown text-orange hover:bg-brown hover:border-brown"
-      onClick={(e) => changeWallet()}
+      className="btn btn-warning"
+      onClick={() => changeWallet()}
     >
-      Switch to {allowedChain.name}
+      Switch to {chainName}
     </button>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useAccount, useContractRead, chain, useNetwork } from "wagmi";
+import { useAccount, useContractRead, defaultChains, useNetwork, Chain } from "wagmi";
 import {
+  chainId,
   tokenAddress,
   contractInterface,
   mintSteps,
@@ -19,7 +20,8 @@ import ConnectButton from "../Buttons/ConnectButton";
 import MintButton from "../Buttons/MintButton";
 import BackoffButton from "../Buttons/BackoffButton";
 
-const allowedChain = chain.rinkeby;
+const chains = defaultChains
+const defaultChain = chains.find((x: Chain) => x.id === chainId)
 
 const useContractSupply = (enabled?: boolean) => {
   return useContractRead(
@@ -28,12 +30,12 @@ const useContractSupply = (enabled?: boolean) => {
       contractInterface: contractInterface,
     },
     "totalSupply",
-    { chainId: allowedChain.id, enabled: enabled ?? true }
+    { chainId: defaultChain.id, enabled: enabled ?? true }
   );
 };
 
 const isValidConnection = (chain?: any, account?: any) => {
-  return account?.connector ? chain?.id == allowedChain.id : false;
+  return account?.connector ? chain?.id == defaultChain.id : false;
 };
 
 const MintModule = () => {
@@ -124,8 +126,8 @@ const MintModule = () => {
         </>
       )}
       <div className="flex flex-col w-2/3 md:w-1/2 self-center gap-2">
-        {activeChain && activeChain.id != allowedChain.id ? (
-          <WrongChainButton allowedChain={allowedChain} />
+        {activeChain && activeChain.id != defaultChain.id ? (
+          <WrongChainButton allowedChain={defaultChain} />
         ) : !account?.connector ? (
           <ConnectButton />
         ) : mintAllowed ? (

@@ -1,6 +1,6 @@
 import React from 'react'
 import { AppProps } from 'next/app'
-import { Provider, createClient, chain, defaultChains, Chain } from 'wagmi'
+import { Provider, createClient, defaultChains, Chain } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import {CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import {WalletConnectConnector} from 'wagmi/connectors/walletConnect'
@@ -10,7 +10,7 @@ import '../styles/globals.css'
 const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID
 
 const chains = defaultChains
-const defaultChain = chain.rinkeby
+const defaultChain = chains.find((x: Chain) => x.id === (process.env.NEXT_PUBLIC_CHAIN_ID || 1))
 
 const client = createClient({
     autoConnect: true,
