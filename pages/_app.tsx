@@ -10,7 +10,7 @@ import '../styles/globals.css'
 const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID
 
 const chains = defaultChains
-const defaultChain = chains.find((x: Chain) => x.id === (process.env.NEXT_PUBLIC_CHAIN_ID || 1))
+const defaultChain = chains.find((x: Chain) => x.id === Number(process.env.NEXT_PUBLIC_CHAIN_ID || 1))
 
 const client = createClient({
     autoConnect: true,

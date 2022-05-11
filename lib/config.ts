@@ -48,7 +48,7 @@ const config = {
   contractInterface: ArtERC721A.abi,
   mintStartTime: Number(process.env.NEXT_PUBLIC_MINT_START_TIME || 0),
   mintSteps: steps,
-  stepId: Number(process.env.NEXT_PUBLIC_STEP_ID || 1),
+  stepId: Number(process.env.NEXT_PUBLIC_STEP_ID || 0),
   goldlist: goldTree.claims,
   whitelist: whiteTree.claims,
 };
