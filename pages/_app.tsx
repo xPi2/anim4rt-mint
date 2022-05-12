@@ -6,6 +6,7 @@ import {CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import {WalletConnectConnector} from 'wagmi/connectors/walletConnect'
 
 import '../styles/globals.css'
+import { providers } from 'ethers'
 
 const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_ID
 
@@ -14,13 +15,14 @@ const defaultChain = chains.find((x: Chain) => x.id === Number(process.env.NEXT_
 
 const client = createClient({
     autoConnect: true,
+    provider(config) {
+        return new providers.AlchemyProvider(config.chainId, alchemyId)
+    },
     connectors({ chainId }) {
         const chain = chains.find((x: Chain) => x.id === chainId) ?? defaultChain
         const rpcUrl = chain.rpcUrls.alchemy
             ? `${chain.rpcUrls.alchemy}/${alchemyId}`
             : chain.rpcUrls.default
-        console.log(chain)
-        console.log(rpcUrl)
         return [
             new InjectedConnector({
                 chains: [chain]

@@ -19,7 +19,6 @@ import WrongChainButton from "../Buttons/WrongChainButton";
 import ConnectButton from "../Buttons/ConnectButton";
 import MintButton from "../Buttons/MintButton";
 import BackoffButton from "../Buttons/BackoffButton";
-import { BigNumber } from "ethers";
 
 const chains = defaultChains
 const defaultChain = chains.find((x: Chain) => x.id === chainId)
@@ -47,6 +46,7 @@ const MintModule = () => {
     const { data: totalSupply } = useContractSupply(
       isValidConnection(activeChain, account)
     );
+    console.log(activeChain)
 
     const { data: minted } = useContractMinted(account?.address);
     // const { data: addressBalance } = useAccountBalance(account?.address, isValidConnection(activeChain, account))
